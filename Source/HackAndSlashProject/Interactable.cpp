@@ -6,7 +6,3 @@
 // Add default functionality here for any IInteractable functions that are not pure virtual.
 
 
-void IInteractable::OnInteraction(APlayerController * playerController)
-{
-
-}

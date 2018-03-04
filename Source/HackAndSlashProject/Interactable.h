@@ -5,8 +5,9 @@
 #include "CoreMinimal.h"
 #include "Interactable.generated.h"
 
+class AHackAndSlashProjectPlayerController;
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(Blueprintable)
 class UInteractable : public UInterface
 {
 	GENERATED_BODY()
@@ -21,7 +22,9 @@ class HACKANDSLASHPROJECT_API IInteractable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "IInteraction")
-	void OnSelected(APlayerController * playerController);
-	void OnInteraction(APlayerController * playerController);
+	//UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "IInteraction")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "IInteraction")
+	void OnSelected(AHackAndSlashProjectPlayerController * playerController);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "IInteraction")
+	void OnInteraction(AHackAndSlashProjectPlayerController * playerController);
 };

@@ -5,20 +5,108 @@
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "HackAndSlashProjectCharacter.h"
+#include "Interactable.h"
+#include "AttackComponent.h"
 
 AHackAndSlashProjectPlayerController::AHackAndSlashProjectPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	isOccupied = false;
+	CurAction = nullptr;
+	actionTarget = nullptr;
+	bMousePressed = false;
+	//AttackComponent_BP = FindComponentByClass<UAttackComponent>();
+}
+
+
+void AHackAndSlashProjectPlayerController::OrderActivate(AActor * target)
+{
+	CurAction = &AHackAndSlashProjectPlayerController::Goto;
+}
+void AHackAndSlashProjectPlayerController::OrderAttack(AActor * target)
+{
+	CurAction = &AHackAndSlashProjectPlayerController::GotoAttack;
+}
+
+void AHackAndSlashProjectPlayerController::Goto(float deltaTime)
+{
+	// If distance < 100
+
+	if (SetNewMoveDestination(targetLocation))
+		CurAction = nullptr;
+}
+
+void AHackAndSlashProjectPlayerController::GotoAttack(float deltaTime)
+{
+	// get Attrack machin. Dist < ? 
+	if (SetNewMoveDestination(targetLocation))
+		CurAction = nullptr;
+
+		// check the distance to the target : 
+	APawn* const MyPawn = GetPawn();
+	if (MyPawn)
+	{
+		float const Distance = FVector::Dist(actionTarget->GetActorLocation(), MyPawn->GetActorLocation());
+		if (Distance < 200.0f)
+		{
+			CurAction = &AHackAndSlashProjectPlayerController::Attack;
+			StopMovement();
+			auto AttackComponent_BP = MyPawn->FindComponentByClass<UAttackComponent>();
+			if (ensure(AttackComponent_BP))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("LaunchAttackC++"));
+				AttackComponent_BP->LaunchAttack();
+			}
+			UE_LOG(LogTemp, Warning, TEXT("EndGotoAttack"));
+		}
+	}
+	
+}
+
+void AHackAndSlashProjectPlayerController::Attack(float deltaTime)
+{
+	//  
+}
+
+void AHackAndSlashProjectPlayerController::Activate(float deltaTime)
+{
+	// lauch Anim
 }
 
 void AHackAndSlashProjectPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
+	
+		// Execute current phase of FSM
+	if (CurAction != nullptr)
 	{
-		MoveToMouseCursor();
+		(this->*CurAction)(DeltaTime);
+	}
+		// takes order from player. 
+	if (isOccupied)
+		return;
+	if (bMousePressed)
+	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+		if (Hit.Actor != nullptr)
+		{
+			IInteractable * interactable = Cast<IInteractable>(Hit.Actor->GetClass());
+			//UE_LOG(LogTemp, Warning, TEXT("actor : %s"), *GetNameSafe(Hit.Actor->GetClass()));
+			targetLocation = Hit.ImpactPoint;
+				// If it's an Interactable it'll will tell us what to do. 
+			if (Hit.GetActor()->Implements<UInteractable>())
+			{
+				IInteractable::Execute_OnSelected(Hit.GetActor(), this);
+				actionTarget = Hit.GetActor();
+			} 
+			else
+			{
+				actionTarget = nullptr;
+				CurAction = &AHackAndSlashProjectPlayerController::Goto;
+			}
+		}
 	}
 }
 
@@ -31,34 +119,8 @@ void AHackAndSlashProjectPlayerController::SetupInputComponent()
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AHackAndSlashProjectPlayerController::OnSetDestinationReleased);
 }
 
-void AHackAndSlashProjectPlayerController::MoveToMouseCursor()
-{
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
-	{
-		if (AHackAndSlashProjectCharacter* MyPawn = Cast<AHackAndSlashProjectCharacter>(GetPawn()))
-		{
-			if (MyPawn->GetCursorToWorld())
-			{
-				UNavigationSystem::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
-	}
-	else
-	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
-	}
-}
-
-
-void AHackAndSlashProjectPlayerController::SetNewMoveDestination(const FVector DestLocation)
+bool AHackAndSlashProjectPlayerController::SetNewMoveDestination(const FVector DestLocation)
 {
 	APawn* const MyPawn = GetPawn();
 	if (MyPawn)
@@ -71,17 +133,30 @@ void AHackAndSlashProjectPlayerController::SetNewMoveDestination(const FVector D
 		{
 			NavSys->SimpleMoveToLocation(this, DestLocation);
 		}
+		else
+		{
+			return true;
+		}
+	}
+	return false;
+}
+void AHackAndSlashProjectPlayerController::StopMovement()
+{
+	APawn* const MyPawn = GetPawn();
+	UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
+	if (MyPawn)
+	{
+		NavSys->SimpleMoveToLocation(this, GetPawn()->GetActorLocation());
 	}
 }
 
 void AHackAndSlashProjectPlayerController::OnSetDestinationPressed()
 {
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
+	bMousePressed = true;
 }
 
 void AHackAndSlashProjectPlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+	bMousePressed = false;
 }

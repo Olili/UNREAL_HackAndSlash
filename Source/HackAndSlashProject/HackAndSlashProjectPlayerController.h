@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "HackAndSlashProjectPlayerController.generated.h"
 
+class IInteractable;
+class UAttackComponent;
+
 UCLASS()
 class AHackAndSlashProjectPlayerController : public APlayerController
 {
@@ -13,24 +16,44 @@ class AHackAndSlashProjectPlayerController : public APlayerController
 
 public:
 	AHackAndSlashProjectPlayerController();
+	UFUNCTION(BlueprintCallable, Category = "Order")
+	void OrderActivate(AActor * target);
+	UFUNCTION(BlueprintCallable, Category = "Order")
+	void OrderAttack(AActor * target);
+
+	//UFUNCTION(BlueprintCallable, Category = "Setup")
+	//void Initialise(UAttackComponent* _AttackComponent);
 
 protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
 
+
+	/** Begin State machine  */
+	bool isOccupied;
+	typedef void (AHackAndSlashProjectPlayerController::*FunctionPtrType)(float deltaTime);
+	FunctionPtrType CurAction;
+
+	void Goto(float deltaTime);
+	void GotoAttack(float deltaTime);
+	void Attack(float deltaTime);
+	void Activate(float deltaTime);
+
+	/** End State machine  */
+	AActor * actionTarget;
+	FVector targetLocation;
+	/** True if the controlled character should navigate to the mouse cursor. */
+	bool bMousePressed;
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
 
+	// COmponent : 
+	//UAttackComponent * AttackComponent_BP =nullptr;
 
-	/** Navigate player to the current mouse cursor location. */
-	void MoveToMouseCursor();
-
-	
 	
 	/** Navigate player to the given world location. */
-	void SetNewMoveDestination(const FVector DestLocation);
+	bool SetNewMoveDestination(const FVector DestLocation);
+	void StopMovement();
 
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();

@@ -1,2 +1,18 @@
 --> intégrer inventaire.
 --> integrer animations. 
+
+
+
+
+Todo : 
+
+--> faire des recherche sur la meilleur position pour
+attquer quelqu'un ( a distance). GetPawn()->getLocation 
+
+
+Done :
+--> Create Interface Interactable ( to handle selection from the player
+wether he clicks on an enemi, a door, an item ... )
+--> Integrate StateMachine in playerController. 
+	--> Handle movement and anticipate attack and activate.
+--> Change animation on player. 
