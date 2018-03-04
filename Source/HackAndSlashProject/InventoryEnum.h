@@ -13,6 +13,7 @@ enum class EItemType : uint8
 	Armor 	UMETA(DisplayName = "Armor"),
 	Feet 	UMETA(DisplayName = "Feet"),
 	Arm 	UMETA(DisplayName = "Arm"),
-	Ring	UMETA(DisplayName = "Ring")
+	Ring	UMETA(DisplayName = "Ring"),
+	Consumable	UMETA(DisplayName = "Consumable"),
 };
 
