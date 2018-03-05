@@ -16,6 +16,7 @@ class HACKANDSLASHPROJECT_API UWeaponData : public UItemData
 public : 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float damage;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<UAnimMontage*> attackMontage;
 	
 };

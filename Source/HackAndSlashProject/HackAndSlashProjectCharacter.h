@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "HackAndSlashProjectCharacter.generated.h"
 
+
 UCLASS(Blueprintable)
 class AHackAndSlashProjectCharacter : public ACharacter
 {

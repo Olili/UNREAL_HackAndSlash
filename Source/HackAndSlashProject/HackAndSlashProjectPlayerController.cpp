@@ -52,7 +52,7 @@ void AHackAndSlashProjectPlayerController::GotoAttack(float deltaTime)
 		{
 			CurAction = &AHackAndSlashProjectPlayerController::Attack;
 			StopMovement();
-			auto AttackComponent_BP = MyPawn->FindComponentByClass<UAttackComponent>();
+			UAttackComponent *  AttackComponent_BP = MyPawn->FindComponentByClass<UAttackComponent>();
 			if (ensure(AttackComponent_BP))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("LaunchAttackC++"));

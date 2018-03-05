@@ -6,11 +6,33 @@
 
 Todo : 
 
+	Must be done : 
 --> faire des recherche sur la meilleur position pour
 attquer quelqu'un ( a distance). GetPawn()->getLocation 
+--> Inventory with drag and drop
+--> find 3 item type
+	--> Potions
+	--> Weapon
+	--> Other Equipement. 
+--> Event dispacher (leveBluePrint ? )
+--> Level Design
+
+	Secondary : 
+--> Distance attack
+
+
 
 
 Done :
+
+-->inventory : 
+	--> Added ItemDatabase
+	--> Added itemData
+	--> Added itemSlot
+	--> Added inventoryUi
+-->Combo : 
+	-->Added unarmed Animation Combo
+	-->Added combo Damage 
 --> Create Interface Interactable ( to handle selection from the player
 wether he clicks on an enemi, a door, an item ... )
 --> Integrate StateMachine in playerController. 
