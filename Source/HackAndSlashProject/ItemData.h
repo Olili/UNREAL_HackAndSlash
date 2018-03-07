@@ -9,6 +9,7 @@
 /**
  * 
  */
+class AItemInWorld;
 UCLASS(Blueprintable,BlueprintType)
 class HACKANDSLASHPROJECT_API UItemData : public UObject
 {
@@ -21,6 +22,8 @@ public :
 	UTexture2D* itemThumbnail;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBlueprint* item3DBlueprint;
-	
+	TSubclassOf<AItemInWorld> item3DBlueprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName socketName;
 };

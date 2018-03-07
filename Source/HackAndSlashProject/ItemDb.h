@@ -20,5 +20,4 @@ class HACKANDSLASHPROJECT_API UItemDb : public UDataAsset
 public : 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemVariables")
 	TArray<UClass*> items;
-	
 };

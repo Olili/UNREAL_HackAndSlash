@@ -25,4 +25,7 @@ protected  :
 	UFUNCTION(BlueprintImplementableEvent, BluePrintCallable, Category = "InventorySlots")
 	bool AddItemToBag(UItemData * itemData);
 
+	UFUNCTION(BlueprintImplementableEvent, BluePrintCallable, Category = "Bag")
+	void InitBag();
+
 };

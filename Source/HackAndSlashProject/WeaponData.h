@@ -18,5 +18,4 @@ public :
 	float damage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<UAnimMontage*> attackMontage;
-	
 };

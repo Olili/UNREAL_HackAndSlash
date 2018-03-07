@@ -8,10 +8,13 @@
 #include "SlotUI.generated.h"
 
 class UItemData;
+class UItemUI;
+class UCanvasPanel;
 
 /**
  * 
  */
+class AItemInWorld;
 UCLASS()
 class HACKANDSLASHPROJECT_API USlotUI : public UUserWidget
 {
@@ -19,9 +22,36 @@ class HACKANDSLASHPROJECT_API USlotUI : public UUserWidget
 public : 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (Bitmask, BitmaskEnum = "EItemType"))
 	int32 itemMask;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<class UItemUI> ItemUIWidgetTemplate;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UItemData* itemData;
+	UItemUI * itemUIBP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isEquipmentSlot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AItemInWorld *equippedItem;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void Init(UItemData * UItemData);
+	UFUNCTION(BlueprintCallable)
+	void EmptySlot();
+
+	UFUNCTION(BlueprintCallable)
+	void AddItem(UItemUI * itemUI);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Slot")
+	UCanvasPanel* GetCanvasPanel();
+
+	UFUNCTION(BlueprintCallable)
+	void AddItemFromGround(UItemData * UItemData);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Equipment")
+	void AddEquipement(UItemData * UItemData);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Equipment")
+	void RemoveEquipement();
 };

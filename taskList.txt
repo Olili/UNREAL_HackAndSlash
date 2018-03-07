@@ -9,7 +9,6 @@ Todo :
 	Must be done : 
 --> faire des recherche sur la meilleur position pour
 attquer quelqu'un ( a distance). GetPawn()->getLocation 
---> Inventory with drag and drop
 --> find 3 item type
 	--> Potions
 	--> Weapon

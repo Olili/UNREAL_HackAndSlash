@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "AttackComponent.generated.h"
 
-
+class UWeaponData;
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HACKANDSLASHPROJECT_API UAttackComponent : public UActorComponent
 {
@@ -16,7 +16,14 @@ public:
 	// Sets default values for this component's properties
 	UAttackComponent();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Attack")
-		void LaunchAttack();
+	void LaunchAttack();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isOrderAttack;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWeaponData * weaponData;
 
 protected:
 	// Called when the game starts

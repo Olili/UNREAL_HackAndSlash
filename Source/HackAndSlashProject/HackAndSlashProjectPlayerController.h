@@ -20,9 +20,10 @@ public:
 	void OrderActivate(AActor * target);
 	UFUNCTION(BlueprintCallable, Category = "Order")
 	void OrderAttack(AActor * target);
-
 	//UFUNCTION(BlueprintCallable, Category = "Setup")
 	//void Initialise(UAttackComponent* _AttackComponent);
+	UFUNCTION(BlueprintCallable, Category = "Order")
+	void SetOccupied(bool _occupied);
 
 protected:
 
@@ -31,6 +32,8 @@ protected:
 	bool isOccupied;
 	typedef void (AHackAndSlashProjectPlayerController::*FunctionPtrType)(float deltaTime);
 	FunctionPtrType CurAction;
+
+
 
 	void Goto(float deltaTime);
 	void GotoAttack(float deltaTime);
@@ -53,6 +56,7 @@ protected:
 	
 	/** Navigate player to the given world location. */
 	bool SetNewMoveDestination(const FVector DestLocation);
+	void RotateToward(FVector direction);
 	void StopMovement();
 
 	/** Input handlers for SetDestination action. */

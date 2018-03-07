@@ -51,6 +51,7 @@ void AHackAndSlashProjectPlayerController::GotoAttack(float deltaTime)
 		if (Distance < 200.0f)
 		{
 			CurAction = &AHackAndSlashProjectPlayerController::Attack;
+			isOccupied = true;
 			StopMovement();
 			UAttackComponent *  AttackComponent_BP = MyPawn->FindComponentByClass<UAttackComponent>();
 			if (ensure(AttackComponent_BP))
@@ -61,17 +62,67 @@ void AHackAndSlashProjectPlayerController::GotoAttack(float deltaTime)
 			UE_LOG(LogTemp, Warning, TEXT("EndGotoAttack"));
 		}
 	}
-	
 }
 
 void AHackAndSlashProjectPlayerController::Attack(float deltaTime)
 {
-	//  
+	if (bMousePressed)
+	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+		if (Hit.bBlockingHit)
+		{
+			if (Hit.GetActor() != nullptr)
+			{
+				float const Distance = FVector::Dist(Hit.GetActor()->GetActorLocation(), GetPawn()->GetActorLocation());
+				if (Distance < 200.f)
+				{
+					actionTarget = Hit.GetActor();
+					UE_LOG(LogTemp, Warning, TEXT("I am clicking and i found target ++"));
+				}
+			}
+		}
+	}
+	else
+	{
+		actionTarget = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("NO TARGETS"));
+	}
+	APawn* const MyPawn = GetPawn();
+	if (MyPawn)
+	{
+		UAttackComponent *  AttackComponent_BP = MyPawn->FindComponentByClass<UAttackComponent>();
+		if (actionTarget)
+			AttackComponent_BP->isOrderAttack = true;
+		else
+			AttackComponent_BP->isOrderAttack = false;
+
+		if (AttackComponent_BP->isOrderAttack == false && isOccupied == false)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("STOP_ATTACK++"));
+			CurAction = nullptr;
+		}
+	}
+
+}
+void AHackAndSlashProjectPlayerController::RotateToward(FVector direction)
+{
+	ACharacter * character = GetCharacter();
+	if (ensure(character))
+	{
+		FRotator rotator = FRotationMatrix::MakeFromX(direction).Rotator();
+		UCharacterMovementComponent  * movementComponent = character->GetCharacterMovement();
+		SetControlRotation(rotator);
+	}
 }
 
 void AHackAndSlashProjectPlayerController::Activate(float deltaTime)
 {
 	// lauch Anim
+}
+void AHackAndSlashProjectPlayerController::SetOccupied(bool _occupied)
+{
+	isOccupied = _occupied;
 }
 
 void AHackAndSlashProjectPlayerController::PlayerTick(float DeltaTime)
