@@ -39,6 +39,7 @@ protected:
 	void GotoAttack(float deltaTime);
 	void Attack(float deltaTime);
 	void Activate(float deltaTime);
+	void FaceTarget(float deltaTime);
 
 	/** End State machine  */
 	AActor * actionTarget;
@@ -56,7 +57,7 @@ protected:
 	
 	/** Navigate player to the given world location. */
 	bool SetNewMoveDestination(const FVector DestLocation);
-	void RotateToward(FVector direction);
+	void RotateToward();
 	void StopMovement();
 
 	/** Input handlers for SetDestination action. */

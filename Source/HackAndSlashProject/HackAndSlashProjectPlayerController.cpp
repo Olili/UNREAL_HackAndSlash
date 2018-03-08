@@ -7,6 +7,7 @@
 #include "HackAndSlashProjectCharacter.h"
 #include "Interactable.h"
 #include "AttackComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AHackAndSlashProjectPlayerController::AHackAndSlashProjectPlayerController()
 {
@@ -66,6 +67,7 @@ void AHackAndSlashProjectPlayerController::GotoAttack(float deltaTime)
 
 void AHackAndSlashProjectPlayerController::Attack(float deltaTime)
 {
+	RotateToward();
 	if (bMousePressed)
 	{
 		FHitResult Hit;
@@ -103,17 +105,44 @@ void AHackAndSlashProjectPlayerController::Attack(float deltaTime)
 			CurAction = nullptr;
 		}
 	}
-
 }
-void AHackAndSlashProjectPlayerController::RotateToward(FVector direction)
+void AHackAndSlashProjectPlayerController::FaceTarget(float deltaTime)
 {
-	ACharacter * character = GetCharacter();
-	if (ensure(character))
+	/*APawn* const MyPawn = GetPawn();
+	if (MyPawn)
 	{
-		FRotator rotator = FRotationMatrix::MakeFromX(direction).Rotator();
-		UCharacterMovementComponent  * movementComponent = character->GetCharacterMovement();
-		SetControlRotation(rotator);
+		if (actionTarget)
+		{
+			FVector direction = MyPawn->GetActorLocation() - actionTarget->GetActorLocation();
+			direction.Normalize();
+			RotateToward(direction);
+		}
+	}*/
+	
+}
+void AHackAndSlashProjectPlayerController::RotateToward()
+{
+	APawn* const MyPawn = GetPawn();
+	if (MyPawn)
+	{
+		if (actionTarget)
+		{
+			FVector targetGroundLocation = actionTarget->GetActorLocation();
+			FVector selfGroundLocation = MyPawn->GetActorLocation();
+			targetGroundLocation.Z = 0;
+			selfGroundLocation.Z = 0;
+			//FRotator rotator = UKismetMathLibrary::FindLookAtRotation(MyPawn->GetActorLocation(), actionTarget->GetActorLocation());
+			FRotator rotator = FRotationMatrix::MakeFromX(targetGroundLocation - selfGroundLocation).Rotator();
+			//SetControlRotation(rotator);
+			MyPawn->SetActorRotation(rotator);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Missing Target In rotation ++"));
+		}
 	}
+
+	
 }
 
 void AHackAndSlashProjectPlayerController::Activate(float deltaTime)
